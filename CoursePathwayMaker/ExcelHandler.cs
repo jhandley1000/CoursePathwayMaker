@@ -109,7 +109,7 @@ namespace CoursePathwayMaker
 							if ((Convert.ToInt32(dataWorksheet.Cells[rowNum + 1, 1].Value).Equals(Convert.ToInt32(pathwayWorksheet.Cells[1, count + 2].Value)))
 								&& (Convert.ToInt32(dataWorksheet.Cells[rowNum + 1, 2].Value).Equals(Convert.ToInt32(pathwayWorksheet.Cells[2, count + 2].Value)))
 								&& (Convert.ToInt32(dataWorksheet.Cells[rowNum + 1, 4].Value).Equals(Convert.ToInt32(student))))
-							{
+							{ 
 								pathwayWorksheet.Cells[pathwayRowCount, count + 1].Value += dataWorksheet.Cells[rowNum, 3];
 							}
 							rowNum += 1;

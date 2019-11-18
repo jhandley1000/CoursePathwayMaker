@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using CoursePathwayMaker.ForceDirectedTableMaker;
+using CoursePathwayMaker.NuStarDataScraperTool;
+using CoursePathwayMaker.PathwayMaker;
 
 namespace CoursePathwayMaker
 {
@@ -10,23 +13,33 @@ namespace CoursePathwayMaker
 	{
 		static void Main(string[] args)
 		{
-			Console.WriteLine("File Path For Data File:");
-			var dataFilePath = Console.ReadLine();
+            Console.WriteLine(@"Welcome to Jess' pathway generator. This is still in dev, so if it breaks let me know.
+Commands:
+mp      ------ make pathway table from enrollmentdata file
+prepfd  ------ prepare data for force directed diagram from pathway table
+getdata ------ get data from NuStar");
 
-			Console.WriteLine("Start Year:");
-			var startYear = Convert.ToInt32(Console.ReadLine());
+            string command;
+            while ((command = Console.ReadLine()) != "q")
+            {
+                if (command.Equals("mp"))
+                {
+                    var pathwayMaker = new PathwayMakerTool();
+                    pathwayMaker.MakePathways(new ConsoleReader());
+                }
+                
+                if (command.Equals("prepfd"))
+                {
+                    var forceDirectedTableMaker = new FDTableMaker();
+                    forceDirectedTableMaker.CreateForceDirectedTable();
+                }
 
-			Console.WriteLine("End Year:");
-			var endYear = Convert.ToInt32(Console.ReadLine());
-
-			Console.WriteLine("Campus:");
-			var campus = Console.ReadLine();
-
-			var excelHandler = new ExcelHandler(dataFilePath, campus);
-			excelHandler.SetUpPathwayFile(startYear, endYear);
-			excelHandler.BuildPathwaysForEachStudent(endYear-startYear+1);
-			excelHandler.SavePathwayFile();
-			excelHandler.QuitApp();
+                if (command.Equals("getdata"))
+                {
+                    var nuStarDataScraper = new NuStarDataScraper();
+                    nuStarDataScraper.GetDataFromNuStarWebsite();
+                }
+            }
 		}
 	}
 }

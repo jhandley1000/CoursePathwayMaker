@@ -8,9 +8,9 @@ namespace CoursePathwayMaker.PathwayMaker
 {
     public class ConsoleReader : IConsoleReader
     {
-        public string GetDataFilePath()
+        public string GetInputFilePath()
         {
-            return GetInputFromUser("File Path For Data File: ");
+            return GetInputFromUser("Input File Path: ");
         }
 
         public int GetStartYear()
@@ -23,14 +23,41 @@ namespace CoursePathwayMaker.PathwayMaker
             return Convert.ToInt32(GetInputFromUser("End Year: "));
         }
 
-        public string GetCampus()
+        public string GetWorksheetName()
         {
-            return GetInputFromUser("Campus: ");
+            return GetInputFromUser("Worksheet Name: ");
         }
 
-        public string GetFileSavePath()
+        public string GetNewSaveFilePath()
         {
-            return GetInputFromUser("Save Pathway File As: ");
+            return GetInputFromUser("Save New File As: ");
+        }
+
+        public string GetTerm()
+        {
+            return GetInputFromUser("Term: ");
+        }
+
+        public string GetSemester()
+        {
+            return GetInputFromUser("Semester: ");
+        }
+
+        public string GetSubjectArea()
+        {
+            return GetInputFromUser("Subject Area: ");
+        }
+
+        public bool AddToDb()
+        {
+            var addToDb = false;
+
+            if (GetInputFromUser("Add To Database (y/n): ").Equals("y"))
+            {
+                addToDb = true;
+            }
+
+            return addToDb;
         }
 
         string GetInputFromUser(string prompt)

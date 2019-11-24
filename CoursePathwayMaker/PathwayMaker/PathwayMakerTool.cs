@@ -15,11 +15,11 @@ namespace CoursePathwayMaker.PathwayMaker
 
         public void MakePathways(IConsoleReader consoleReader)
         {
-            var dataFilePath = consoleReader.GetDataFilePath();
+            var dataFilePath = consoleReader.GetInputFilePath();
             var startYear = consoleReader.GetStartYear();
             var endYear = consoleReader.GetEndYear();
-            var campus = consoleReader.GetCampus();
-            var pathwayFilePath = consoleReader.GetFileSavePath();
+            var campus = consoleReader.GetWorksheetName();
+            var pathwayFilePath = consoleReader.GetNewSaveFilePath();
 
             var excelHandler = new ExcelHandler(dataFilePath, campus, pathwayFilePath);
 

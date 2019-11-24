@@ -41,6 +41,7 @@
       <Private>False</Private>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Xml.Linq" />
@@ -51,21 +52,23 @@
     <Reference Include="System.Xml" />
     <Reference Include="WebDriver, Version=3.141.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Selenium.WebDriver.3.141.0\lib\net45\WebDriver.dll</HintPath>
-      <Private>False</Private>
     </Reference>
     <Reference Include="WebDriver.Support, Version=3.141.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Selenium.Support.3.141.0\lib\net45\WebDriver.Support.dll</HintPath>
-      <Private>False</Private>
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DbHandler.cs" />
     <Compile Include="ExcelHandler.cs" />
     <Compile Include="ForceDirectedTableMaker\ForceDirectedTableExcelHandler.cs" />
-    <Compile Include="ForceDirectedTableMaker\ForceDirectedTableMaker.cs" />
+    <Compile Include="ForceDirectedTableMaker\ForceDirectedTableMakerTool.cs" />
     <Compile Include="ForceDirectedTableMaker\Connection.cs" />
     <Compile Include="NuStarDataScraperTool\ClassRosterSearchResult.cs" />
+    <Compile Include="NuStarDataScraperTool\DataScraperInput.cs" />
+    <Compile Include="NuStarDataScraperTool\ISaveFilePathMaker.cs" />
     <Compile Include="NuStarDataScraperTool\NuStarDataScraper.cs" />
     <Compile Include="NuStarDataScraperTool\NuStarWebsiteNavigator.cs" />
+    <Compile Include="NuStarDataScraperTool\SaveFilePathMaker.cs" />
     <Compile Include="PathwayMaker\ConsoleReader.cs" />
     <Compile Include="PathwayMaker\ExcelFileManagerForTests.cs" />
     <Compile Include="PathwayMaker\IConsoleReader.cs" />

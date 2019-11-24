@@ -3,22 +3,20 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using CoursePathwayMaker.PathwayMaker;
 
 namespace CoursePathwayMaker.ForceDirectedTableMaker
 {
-    public class FDTableMaker
+    public class ForceDirectedTableMakerTool
     {
-        public FDTableMaker()
+        public ForceDirectedTableMakerTool()
         {
         }
 
-        public void CreateForceDirectedTable()
+        public void CreateForceDirectedTable(IConsoleReader consoleReader)
         {
-            Console.Write("File Path for Pathway Table: ");
-            var pathwayTableFilePath = Console.ReadLine();
-
-            Console.Write("Save As: ");
-            var forceDirectedTableFilePath = Console.ReadLine();
+            var pathwayTableFilePath = consoleReader.GetInputFilePath();
+            var forceDirectedTableFilePath = consoleReader.GetNewSaveFilePath();
 
             var handler = new ForceDirectedTableExcelHandler(pathwayTableFilePath, forceDirectedTableFilePath);
             handler.GetConnectionsFromPathwayFile();

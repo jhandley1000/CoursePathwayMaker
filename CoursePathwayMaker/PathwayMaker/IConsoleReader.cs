@@ -8,10 +8,14 @@ namespace CoursePathwayMaker.PathwayMaker
 {
     public interface IConsoleReader
     {
-        string GetDataFilePath();
+        string GetInputFilePath();
         int GetStartYear();
         int GetEndYear();
-        string GetCampus();
-        string GetFileSavePath(); 
+        string GetWorksheetName();
+        string GetNewSaveFilePath();
+        string GetSubjectArea();
+        string GetTerm();
+        string GetSemester();
+        bool AddToDb();
     }
 }

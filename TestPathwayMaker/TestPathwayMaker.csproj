@@ -65,15 +65,24 @@
   <ItemGroup>
     <Compile Include="PathwayMakerTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="TestForceDirectedTableMaker.cs" />
+    <Compile Include="TestNuStarDataScraperTool.cs" />
     <Compile Include="TestObjects\ConsoleReaderForTests.cs" />
+    <Compile Include="TestObjects\FilePathConstructorForTests.cs" />
+    <Compile Include="TestObjects\SaveFilePathMakerForTests.cs" />
+    <Compile Include="TestObjects\WorksheetTableComparerForTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
     <None Include="packages.config" />
+    <None Include="PathwayFiles\OurimbahMNGT20062018S2PATHWAY.xlsx" />
     <None Include="TestDataFile\AllCampusACFIData2016-2019.xlsx" />
     <None Include="TestDataFile\OurimbahOnlyMNGTData2017-2019.xlsx" />
     <None Include="TestExcelFiles\AllCampusACFI10012016S1TESTFILE.xlsx" />
+    <None Include="TestExcelFiles\GetDataFromNuStarWebsiteTest_MNGTS12019.xlsx" />
     <None Include="TestExcelFiles\OurimbahMNGT30072018S1TESTFILE.xlsx" />
+    <None Include="TestTables\OurimbahMNGT20062018S1TESTFILE.xlsx" />
+    <None Include="TestTables\OurimbahMNGT20062018S1TESTFILE1.xlsx" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\CoursePathwayMaker\CoursePathwayMaker.csproj">
@@ -84,6 +93,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="OUTPUTFORTEST\" />
     <Folder Include="TestExcelFilesOUTPUT\" />
   </ItemGroup>
   <Import Project="$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets" Condition="Exists('$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets')" />

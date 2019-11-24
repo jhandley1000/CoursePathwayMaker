@@ -1,9 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
+using System.Data.Common;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using CoursePathwayMaker.PathwayMaker;
 using Microsoft.Office.Interop.Excel;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
@@ -16,31 +19,63 @@ namespace CoursePathwayMaker.NuStarDataScraperTool
         {
         }
 
-        public void GetDataFromNuStarWebsite()
+        public void GetDataFromNuStarWebsite(IConsoleReader consoleReader, ISaveFilePathMaker saveFilePathMaker)
         {
-            using (var driver = new ChromeDriver(@"C:\Users\kh462\Documents\DEV\CoursePathwayMaker\packages\Selenium.WebDriver.ChromeDriver.78.0.3904.7000\driver\win32\"))
+            var userInputs = GetInputFromUser(consoleReader);
+            var dbOrExcel = consoleReader.AddToDb();
+
+            using (var driver = new ChromeDriver(@"E:\CoursePathwayMaker\CoursePathwayMaker\bin\Debug"))
             {
                 Console.WriteLine("Scraper navigating to NuStar website...");
 
-                Console.Write("Subject Area: ");
-                var subjectArea = Console.ReadLine();
 
-                Console.Write("Term: ");
-                var term = Console.ReadLine();
-
-                Console.WriteLine("Info For Search Result...");
-                Console.Write("Year: ");
-                var year = Console.ReadLine();
-
-                Console.Write("Semester: ");
-                var semester = Console.ReadLine();
+                //var subjectArea = consoleReader.GetSubjectArea();
+                //var term = consoleReader.GetTerm();
+                //var year = consoleReader.GetStartYear().ToString();
+                //var semester = consoleReader.GetSemester();
 
                 var navigator = new NuStarWebsiteNavigator(driver);
                 navigator.NavigateToUonWebsite();
-                navigator.FillSearchFilters(subjectArea, term);
-                var results = GetSearchResults(driver, navigator, year, semester);
-                SaveResultsInExcelWorksheet(results, year, semester, term, subjectArea);
+                navigator.LoginIfNecessary();
+                navigator.NavigateToUonWebsiteAgain();
+                List<ClassRosterSearchResult> results = new List<ClassRosterSearchResult>();
+                foreach (var sem in userInputs)
+                {
+                    navigator.FillSearchFilters(sem.SubjectArea, sem.Term);
+                    results.AddRange(GetSearchResults(driver, navigator, sem.Year.ToString(), sem.Semester.ToString()));
+                    navigator.ClearSearchFields();
+                }
+
+                if (dbOrExcel == true)
+                {
+                    SaveResultsInDb(results);
+                }
+                else
+                {
+                    SaveResultsInExcelWorksheet(results, saveFilePathMaker);
+                }
+                
             }
+        }
+
+        List<DataScraperInput> GetInputFromUser(IConsoleReader consoleReader)
+        {
+            Console.WriteLine("Info For Search Result...");
+
+            var subjectArea = consoleReader.GetSubjectArea();
+            var startYear = consoleReader.GetStartYear();
+            var endYear = consoleReader.GetEndYear();
+
+            var dataScraperInput = new List<DataScraperInput>();
+
+            while (startYear <= endYear)
+            {
+                dataScraperInput.Add(new DataScraperInput(startYear, subjectArea, 1));
+                dataScraperInput.Add(new DataScraperInput(startYear, subjectArea, 2));
+                startYear++;
+            }
+
+            return dataScraperInput;
         }
 
         public List<ClassRosterSearchResult> GetSearchResults(ChromeDriver driver, NuStarWebsiteNavigator navigator, string year, string semester)
@@ -142,13 +177,57 @@ namespace CoursePathwayMaker.NuStarDataScraperTool
             return campus;
         }
 
-        void SaveResultsInExcelWorksheet(List<ClassRosterSearchResult> results, string year, string semester, string term, string subjectArea)
+        void SaveResultsInDb(List<ClassRosterSearchResult> results)
+        {
+            var dbHandler = new DbHandler();
+            try
+            {
+                var queryStrings = new List<string>();
+                dbHandler.OpenConnection();
+                var queryNum = 0;
+                var index = 1;
+                foreach (var result in results)
+                {
+                    foreach (var enrollment in result.StudentsEnrolled)
+                    {
+                        if (queryNum < 1000)
+                        {
+                            dbHandler.AddNuStarDataRowToInsertQuery(Convert.ToInt32(result.Year), Convert.ToInt32(result.Semester), result.CourseCode, enrollment.StudentID, result.Campus, result.SubjectArea, result.CourseDescription, result.Section, enrollment.ProgramAndPlan);
+                        } else
+                        {
+                            queryStrings.Add(dbHandler.sql);
+                            dbHandler.ReturnAndResetSqlString();
+                            dbHandler.AddNuStarDataRowToInsertQuery(Convert.ToInt32(result.Year), Convert.ToInt32(result.Year), result.CourseCode, enrollment.StudentID, result.Campus, result.SubjectArea, result.CourseDescription, result.Section, enrollment.ProgramAndPlan);
+                            queryNum = 0;
+                        }
+
+                        queryNum += 1;
+                        index += 1;
+                    }
+                }
+
+                queryStrings.Add(dbHandler.sql);
+
+                foreach (var query in queryStrings)
+                {
+                    dbHandler.AddNuStarDataToDb(query);
+                }
+                dbHandler.CloseConnection();
+
+            }
+            catch (DbException ex)
+            {
+               dbHandler.CloseConnection();
+            }
+        }
+
+        void SaveResultsInExcelWorksheet(List<ClassRosterSearchResult> results, ISaveFilePathMaker saveFilePathMaker)
         {
             Application App = new Application();
             try
             {
                 Console.WriteLine("Populating Spreadsheet...");
-                var name = year + "-" + semester + "-" + term + "-" + subjectArea;
+                var name = results[0].Year + "-" + results[0].Semester + "-" + results[0].Term + "-" + results[0].SubjectArea;
                 Workbook workbook = App.Workbooks.Add();
                 Worksheet worksheet = workbook.Worksheets.Add() as Worksheet;
                 worksheet.Name = name;
@@ -182,7 +261,7 @@ namespace CoursePathwayMaker.NuStarDataScraperTool
                     }
                 }
 
-                var saveFileName = "C:\\Users\\kh462\\Documents\\grabbing info test\\" + name + ".xlsx";
+                var saveFileName =saveFilePathMaker.Make(name);
                 Console.WriteLine("Saving as: '{0}'", saveFileName);
                 workbook.SaveAs(saveFileName);
                 App.Quit();
